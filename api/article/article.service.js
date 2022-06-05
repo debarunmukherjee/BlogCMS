@@ -35,7 +35,7 @@ module.exports = {
 				'update articles set title = ?, body = ?, status = ? where id = ?',
 				[title, body, ARTICLE_REVIEW_STATUS, id]
 			)
-			return Number(res[0].changedRows) > 0;
+			return Number(res[0].affectedRows) > 0;
 		} catch (e) {
 			console.log(e);
 			return false;
@@ -84,6 +84,18 @@ module.exports = {
 			const [rows] = await pool.promise().query(
 				'select articles.*, users.fullname as authorName from articles inner join users on articles.authorId = users.id where status = ?',
 				[ARTICLE_APPROVED_STATUS]
+			);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+	getArticlesToBeApproved: async () => {
+		try {
+			const [rows] = await pool.promise().query(
+				'select * from articles where status = ?',
+				[ARTICLE_REVIEW_STATUS]
 			);
 			return rows;
 		} catch (e) {

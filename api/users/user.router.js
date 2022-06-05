@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const { authorized, unAuthorized, twoFAStepAuthorization } = require("../../middlewares/auth");
+const { authorized, unAuthorized, twoFAStepAuthorization, superAdminAuthorized} = require("../../middlewares/auth");
 const {check} = require('express-validator');
-const { createUser, login, logout, getUserDetails, checkIfUserCanProceedTo2FA } = require("./user.controller");
-const {checkEmailIsInUse} = require("./user.service");
+const { createUser, login, logout, getUserDetails, checkIfUserCanProceedTo2FA, grantAdminRole, getSuperadminData } = require("./user.controller");
+const {checkEmailIsInUse, getSuperadminDetails} = require("./user.service");
 
 router.post(
 	"/register",
@@ -59,8 +59,44 @@ router.post(
 	],
 	login
 );
+
 router.post("/logout", authorized, logout);
 
 router.get("/user-details", authorized, getUserDetails);
+
+router.post(
+	"/grant-admin-access",
+	[
+		authorized,
+		superAdminAuthorized,
+		check('email')
+			.not().isEmpty().withMessage('Email cannot be empty')
+			.isEmail().withMessage('Invalid email provided')
+			.custom(value => {
+				return checkEmailIsInUse(value).then(res => {
+					if (!res) {
+						return Promise.reject('E-mail not registered');
+					}
+				})
+			})
+			.custom(value => {
+				return getSuperadminDetails().then(res => {
+					if (res.email === value) {
+						return Promise.reject('Super admin role cannot be changed');
+					}
+				})
+			}),
+	],
+	grantAdminRole
+)
+
+router.get(
+	'/get-superadmin-data',
+	[
+		authorized,
+		superAdminAuthorized
+	],
+	getSuperadminData
+)
 
 module.exports = router;

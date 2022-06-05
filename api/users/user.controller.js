@@ -1,11 +1,15 @@
+const {validationResult} = require('express-validator');
+const { hashSync, genSaltSync, compareSync } = require("bcrypt");
+const { sign } = require("jsonwebtoken");
 const {
 	getUserByUserEmail,
 	createNewUser,
 	getUserById,
+	updateUserRole,
+	getAllAdminUsers
 } = require("./user.service");
-const {validationResult} = require('express-validator');
-const { hashSync, genSaltSync, compareSync } = require("bcrypt");
-const { sign } = require("jsonwebtoken");
+const {getArticlesToBeApproved} = require('../article/article.service');
+const {ADMIN} = require('../../constants/role');
 
 module.exports = {
 	createUser: (req, res) => {
@@ -186,6 +190,48 @@ module.exports = {
 			success: 1,
 			message: "Data fetched successfully",
 			data: req.userData,
+		});
+	},
+	grantAdminRole: async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({
+				success: false,
+				message: "Invalid data",
+				errors: errors.array()
+			});
+		}
+		const  result = await updateUserRole(req.body.email, ADMIN);
+		if (result) {
+			return res.status(200).json({
+				success: 1,
+				message: 'Role updated successfully',
+				data: undefined
+			});
+		}
+		return res.status(500).json({
+			success: 0,
+			message: 'Some server error occurred',
+			data: undefined
+		});
+	},
+	getSuperadminData: async (req, res) => {
+		const articlesToBeApproved = await getArticlesToBeApproved();
+		const adminUsers = await getAllAdminUsers();
+		if (articlesToBeApproved === false || adminUsers === false) {
+			return res.status(500).json({
+				success: 0,
+				message: 'Some server error occurred',
+				data: undefined
+			});
+		}
+		return res.status(200).json({
+			success: 1,
+			message: 'Admin data fetched successfully',
+			data: {
+				articlesToBeApproved,
+				adminUsers
+			}
 		});
 	}
 };
