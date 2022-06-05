@@ -47,7 +47,7 @@ module.exports = {
 				'update articles set status = ? where id = ?',
 				[status, id]
 			)
-			return true;
+			return Number(res[0].affectedRows) > 0;
 		} catch (e) {
 			console.log(e);
 			return false;

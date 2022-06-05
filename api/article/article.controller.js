@@ -5,8 +5,10 @@ const {
 	getArticleById,
 	updateArticle,
 	deleteArticle,
-	getApprovedArticles
+	getApprovedArticles,
+	updateArticleStatus
 } = require('./article.service');
+const {ARTICLE_REVIEW_STATUS, ARTICLE_APPROVED_STATUS} = require("../../constants/blogStatus");
 
 module.exports = {
 	createArticle: async (req, res) => {
@@ -134,6 +136,32 @@ module.exports = {
 			success: 1,
 			message: 'Articles fetched successfully',
 			data: result
+		});
+	},
+	updateArticleState: async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({
+				success: false,
+				message: "Invalid data",
+				errors: errors.array()
+			});
+		}
+		const body = req.body;
+		const status = Number(body.status) === 1 ? ARTICLE_APPROVED_STATUS : ARTICLE_REVIEW_STATUS;
+		const result = await updateArticleStatus(status, body.id);
+		if (result) {
+			const article = await getArticleById(body.id);
+			return res.status(200).json({
+				success: 1,
+				message: 'Article status updated successfully',
+				data: article
+			});
+		}
+		return res.status(500).json({
+			success: 0,
+			message: 'Some server error occurred',
+			data: undefined
 		});
 	}
 };

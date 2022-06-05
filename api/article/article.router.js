@@ -14,7 +14,8 @@ const {
 	getArticleDetails,
 	updateArticleDetails,
 	deleteOldArticle,
-	getPublicArticles
+	getPublicArticles,
+	updateArticleState
 } = require('./article.controller');
 
 router.post(
@@ -32,7 +33,6 @@ router.get(
 	'/get/mine',
 	[
 		authorized,
-		articleCreateAuthorized,
 	],
 	getArticlesForCurrentUser
 );
@@ -84,6 +84,23 @@ router.delete(
 		articleEditAuthorized
 	],
 	deleteOldArticle
+);
+
+router.post(
+	'/update-status',
+	[
+		authorized,
+		superAdminAuthorized,
+		check('id')
+			.not().isEmpty().withMessage('Article id cannot be empty')
+			.isInt().withMessage('Article id must be an integer'),
+		check('status')
+			.not().isEmpty().withMessage('Status cannot be empty')
+			.isInt().withMessage('Status must be an integer')
+			.isIn([0, 1]).withMessage('Status can be either 0 or 1'),
+		articleExists
+	],
+	updateArticleState
 );
 
 module.exports = router;

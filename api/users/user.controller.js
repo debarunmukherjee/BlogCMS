@@ -9,7 +9,7 @@ const {
 	getAllAdminUsers
 } = require("./user.service");
 const {getArticlesToBeApproved} = require('../article/article.service');
-const {ADMIN} = require('../../constants/role');
+const {ADMIN, VIEWER} = require('../../constants/role');
 
 module.exports = {
 	createUser: (req, res) => {
@@ -202,6 +202,29 @@ module.exports = {
 			});
 		}
 		const  result = await updateUserRole(req.body.email, ADMIN);
+		if (result) {
+			return res.status(200).json({
+				success: 1,
+				message: 'Role updated successfully',
+				data: undefined
+			});
+		}
+		return res.status(500).json({
+			success: 0,
+			message: 'Some server error occurred',
+			data: undefined
+		});
+	},
+	revokeAdminRole: async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({
+				success: false,
+				message: "Invalid data",
+				errors: errors.array()
+			});
+		}
+		const  result = await updateUserRole(req.body.email, VIEWER);
 		if (result) {
 			return res.status(200).json({
 				success: 1,
