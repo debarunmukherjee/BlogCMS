@@ -1,0 +1,4 @@
+export const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
+export const MODAL_SHOW = 'MODAL_SHOW';
+export const FETCH_DATA_TOGGLE = 'FETCH_DATA_TOGGLE';
+export const TOGGLE_ALERT = 'TOGGLE_ALERT';
