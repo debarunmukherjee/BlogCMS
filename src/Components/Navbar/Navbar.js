@@ -2,14 +2,14 @@ import LogoSymbol from '../../Assets/Logo/png/color-logo-no-background-just-symb
 import LogoText from '../../Assets/Logo/png/color-logo-no-background-just-text.png';
 import {Fragment, useContext, useEffect, useState} from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../../App";
 import API from "../../Utils/API";
-import {UpdateUserData} from "../../UserStates/Actions";
+import {UpdateUserData, UpdateFetchingDataState} from "../../UserStates/Actions";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import {getErrorMessage} from "../../Utils/Common";
-import Avatar from 'react-avatar';
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ')
@@ -23,6 +23,7 @@ export default function Navbar() {
 	const [navigation, setNavigation] = useState([]);
 
 	const location = useLocation();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchUserDetails = async () => {
@@ -33,11 +34,12 @@ export default function Navbar() {
 					data: res.data.data,
 				}));
 			} catch (e) {
-				// do nothing - typically this is when the user is unauthenticated
+				userDispatch(UpdateFetchingDataState(false));
 			}
 		}
 		fetchUserDetails();
 	}, []);
+
 	useEffect(() => {
 		if (!userState.isLoggedIn) {
 			setNavigation([
@@ -45,10 +47,16 @@ export default function Navbar() {
 				{ name: 'Register', href: 'register', current: location.pathname === '/register' },
 			]);
 		} else {
-			// todo: update navigation links as per user roles later
-			setNavigation([
-				{ name: 'Dashboard', href: '#', current: true },
-			]);
+			const navItems = [
+				{ name: 'Dashboard', href: '#', current: location.pathname === '/dashboard' },
+			];
+			if (userState.userData.role !== 'user') {
+				navItems.push({name: 'Create Blog', href: '/article/add', current: location.pathname === '/article/add'})
+			}
+			if (userState.userData.role === 'super-admin') {
+				navItems.push({name: 'Admin', href: '/admin', current: location.pathname === '/admin'})
+			}
+			setNavigation(navItems);
 		}
 	}, [userState.isLoggedIn, location.pathname]);
 
@@ -59,6 +67,7 @@ export default function Navbar() {
 				isLoggedIn: false,
 				userData: null,
 			}));
+			navigate('/');
 		} catch (e) {
 			const errors = e.response ? e.response.data.message : undefined;
 			Swal.fire({

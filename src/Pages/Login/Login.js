@@ -7,6 +7,7 @@ import API from "../../Utils/API";
 import Swal from "sweetalert2";
 import {getErrorMessage} from "../../Utils/Common";
 import {UpdateUserData} from "../../UserStates/Actions";
+import LoadingComponent from "../../Components/LoadingComponent/LoadingComponent";
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -64,6 +65,11 @@ function Login() {
 			setSendingData(false);
 		}
 	}
+
+	if (userState.fetchingData) {
+		return <LoadingComponent />
+	}
+
 	if (userState.isLoggedIn) {
 		return <Navigate replace to="/dashboard"/>
 	}

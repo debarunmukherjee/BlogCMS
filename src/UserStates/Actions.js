@@ -1,5 +1,6 @@
 import {
-	MODAL_SHOW, TOGGLE_ALERT, UPDATE_USER_DATA,
+	FETCH_DATA_TOGGLE,
+	MODAL_SHOW, UPDATE_USER_DATA,
 } from './ActionTypes';
 
 export function UpdateUserData(data) {
@@ -19,13 +20,9 @@ export function ModalToggle(open, type) {
 	};
 }
 
-export function AlertToggle(open, message, type = 'error') {
+export function UpdateFetchingDataState(isOpen) {
 	return {
-		type: TOGGLE_ALERT,
-		payload: {
-			alertOpen: open,
-			alertMessage: message,
-			alertType: type,
-		},
+		type: FETCH_DATA_TOGGLE,
+		payload: isOpen,
 	};
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import {Link, Navigate} from "react-router-dom";
 import Swal from 'sweetalert2'
 import LogoSymbol from '../../Assets/Logo/png/color-logo-no-background-just-symbol.png';
@@ -6,6 +6,7 @@ import API from "../../Utils/API";
 import {UserContext} from "../../App";
 import {UpdateUserData} from "../../UserStates/Actions";
 import {formatDateYYYYMMDD, getErrorMessage} from "../../Utils/Common";
+import LoadingComponent from "../../Components/LoadingComponent/LoadingComponent";
 
 function Register() {
 	const [fullname, setFullname] = useState('');
@@ -45,6 +46,10 @@ function Register() {
 		} finally {
 			setCreatingUser(false);
 		}
+	}
+
+	if (userState.fetchingData) {
+		return <LoadingComponent />
 	}
 
 	if (userState.isLoggedIn) {

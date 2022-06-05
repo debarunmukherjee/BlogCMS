@@ -8,6 +8,10 @@ import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import PageNotFound from "./Pages/PageNotFound/PageNotFound";
+import ArticleCreate from "./Pages/Article/ArticleCreate";
+import Admin from "./Pages/Admin/Admin";
+import ArticleView from "./Pages/Article/ArticleView";
+import ArticleEdit from "./Pages/Article/ArticleEdit";
 
 export const UserContext = React.createContext();
 
@@ -23,6 +27,10 @@ function App() {
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/article/add" element={<ArticleCreate />} />
+						<Route path="/article/view/:id" element={<ArticleView />} />
+						<Route path="/article/edit/:id" element={<ArticleEdit />} />
+						<Route path="/admin" element={<Admin />} />
 						<Route path="*" element={<PageNotFound />} />
 					</Routes>
 				</div>
