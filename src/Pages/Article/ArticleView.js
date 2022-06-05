@@ -47,7 +47,7 @@ function ArticleView() {
 				if (e.response && (Number(e.response.status) === 403 || Number(e.response.status) === 404)) {
 					navigate('/page-404');
 				} else {
-					const errors = e.response ? e.response.data.message : undefined;
+					const errors = e.response ? (e.response.data.errors ? e.response.data.errors : e.response.data.message) : undefined;
 					Swal.fire({
 							title: getErrorMessage(errors),
 							icon: "error"
@@ -143,6 +143,19 @@ function ArticleView() {
 							</button>
 						)}
 					</>
+				) : ''}
+				{(userState.userData.role === 'super-admin') || (Number(article.authorId) === Number(userState.userData.id) && userState.userData.role === 'admin') ? (
+					<Link to={`/article/history/${id}`}>
+						<button
+							type="button"
+							className="inline-block ml-8 px-6 pt-2.5 pb-2 bg-blue-600 text-white font-medium text-xs leading-normal uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out flex align-center"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+								<path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+							<span className="inline-block ml-3 mt-0.5">History</span>
+						</button>
+					</Link>
 				) : ''}
 
 			</div>
