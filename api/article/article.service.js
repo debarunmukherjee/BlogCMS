@@ -42,12 +42,55 @@ module.exports = {
 		}
 	},
 	updateArticleStatus: async (status, id) => {
+		let conn = null;
 		try {
-			const res = await pool.promise().query(
+			conn = await pool.promise().getConnection();
+			await conn.beginTransaction();
+			const res = await conn.query(
 				'update articles set status = ? where id = ?',
 				[status, id]
 			)
-			return Number(res[0].affectedRows) > 0;
+			const [rows] = await conn.query(
+				'select * from articles where articles.id = ?',
+				[id]
+			);
+			const article = rows[0];
+			let historyResult;
+			if (status === ARTICLE_APPROVED_STATUS) {
+				const result = await conn.query(
+					'insert into article_history(article_id, article_body, article_title) values (?, ?, ?)',
+					[article.id, article.body, article.title]
+				);
+				historyResult = result[0].insertId > 0;
+			} else {
+				historyResult = true;
+			}
+			if (historyResult && Number(res[0].affectedRows) > 0) {
+				await conn.commit();
+				return true;
+			} else {
+				await conn.rollback();
+				return false;
+			}
+		} catch (e) {
+			console.log(e);
+			if (conn) {
+				await conn.rollback();
+				return false;
+			}
+		} finally {
+			if (conn) {
+				await conn.release();
+			}
+		}
+	},
+	getArticlePublicationHistory: async (id) => {
+		try {
+			const [rows] = await pool.promise().query(
+				'select * from article_history where article_id = ?',
+				[id]
+			);
+			return rows;
 		} catch (e) {
 			console.log(e);
 			return false;

@@ -6,7 +6,8 @@ const {
 	updateArticle,
 	deleteArticle,
 	getApprovedArticles,
-	updateArticleStatus
+	updateArticleStatus,
+	getArticlePublicationHistory
 } = require('./article.service');
 const {ARTICLE_REVIEW_STATUS, ARTICLE_APPROVED_STATUS} = require("../../constants/blogStatus");
 
@@ -162,6 +163,30 @@ module.exports = {
 			success: 0,
 			message: 'Some server error occurred',
 			data: undefined
+		});
+	},
+	getArticleHistory: async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({
+				success: false,
+				message: "Invalid data",
+				errors: errors.array()
+			});
+		}
+		const articleId = req.query.id;
+		const history = await getArticlePublicationHistory(articleId);
+		if (history === false) {
+			return res.status(500).json({
+				success: 0,
+				message: 'Some server error occurred',
+				data: undefined
+			});
+		}
+		return res.status(200).json({
+			success: 1,
+			message: 'Article history fetched successfully',
+			data: history
 		});
 	}
 };

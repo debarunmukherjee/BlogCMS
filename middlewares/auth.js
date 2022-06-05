@@ -1,6 +1,6 @@
 const {verify} = require('jsonwebtoken');
 const {getArticleById} = require('../api/article/article.service');
-const {SUPER_ADMIN, VIEWER} = require("../constants/role");
+const {SUPER_ADMIN, VIEWER, ADMIN} = require("../constants/role");
 const {ARTICLE_APPROVED_STATUS} = require('../constants/blogStatus');
 
 module.exports = {
@@ -56,6 +56,15 @@ module.exports = {
 		const userId = req.userData.id;
 		const article = await getArticleById(articleId);
 		if (article && Number(article.authorId) === Number(userId)) {
+			return next();
+		}
+		return res.sendStatus(403);
+	},
+	articleEditOrSuperadminAuthorized: async (req, res, next) => {
+		const articleId = req.body.id || req.query.id || 0;
+		const userId = req.userData.id;
+		const article = await getArticleById(articleId);
+		if (article && ((Number(article.authorId) === Number(userId) && req.userData.role === ADMIN) || req.userData.role === SUPER_ADMIN)) {
 			return next();
 		}
 		return res.sendStatus(403);

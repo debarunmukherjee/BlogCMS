@@ -6,7 +6,8 @@ const {
 	articleCreateAuthorized,
 	articleDetailsViewAuthorized,
 	articleExists,
-	articleEditAuthorized
+	articleEditAuthorized,
+	articleEditOrSuperadminAuthorized
 } = require("../../middlewares/auth");
 const {
 	createArticle,
@@ -15,7 +16,8 @@ const {
 	updateArticleDetails,
 	deleteOldArticle,
 	getPublicArticles,
-	updateArticleState
+	updateArticleState,
+	getArticleHistory
 } = require('./article.controller');
 
 router.post(
@@ -102,5 +104,18 @@ router.post(
 	],
 	updateArticleState
 );
+
+router.get(
+	'/get-history',
+	[
+		authorized,
+		articleEditOrSuperadminAuthorized,
+		query('id')
+			.not().isEmpty().withMessage('Article id cannot be empty')
+			.isInt().withMessage('Article id must be an integer'),
+		articleExists,
+	],
+	getArticleHistory
+)
 
 module.exports = router;
