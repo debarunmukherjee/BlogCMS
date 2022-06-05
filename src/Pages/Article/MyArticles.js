@@ -1,13 +1,14 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {UserContext} from "../../App";
-import {Navigate, useNavigate} from "react-router-dom";
 import LoadingComponent from "../../Components/LoadingComponent/LoadingComponent";
-import ArticleList from "../../Components/ArticleList/ArticleList";
+import PageNotFound from "../PageNotFound/PageNotFound";
 import API from "../../Utils/API";
 import Swal from "sweetalert2";
 import {getErrorMessage} from "../../Utils/Common";
+import {useNavigate} from "react-router-dom";
+import ArticleList from "../../Components/ArticleList/ArticleList";
 
-function Dashboard() {
+function MyArticles() {
 	const userContext = useContext(UserContext);
 	const userState = userContext.state;
 
@@ -17,9 +18,9 @@ function Dashboard() {
 	const [articles, setArticles] = useState([]);
 
 	useEffect(() => {
-		const fetchPublicArticles = async () => {
-			try {
-				const res = await API.get('api/article/get/public');
+		const fetchMyArticles = async () => {
+		  	try {
+				const res = await API.get('api/article/get/mine');
 				setArticles(res.data.data);
 			} catch (e) {
 				if (e.response && (Number(e.response.status) === 403)) {
@@ -36,7 +37,7 @@ function Dashboard() {
 				setFetchingArticles(false);
 			}
 		}
-		fetchPublicArticles();
+		fetchMyArticles();
 	}, []);
 
 	if (userState.fetchingData || fetchingArticles) {
@@ -44,19 +45,20 @@ function Dashboard() {
 	}
 
 	if (!userState.isLoggedIn) {
-		return <Navigate replace to="/login"/>
+		return <PageNotFound />
 	}
 
 	return (
 		<div>
-			<h1 className="text-3xl mb-6">Public Articles</h1>
+			<h1 className="text-3xl mb-6">My Articles</h1>
 			<ArticleList
 				articles={articles}
-				noArticleTitle="No public article available"
-				noArticleMessage="The articles that are approved by admin will be displayed here"
+				showStatus={true}
+				noArticleTitle="You have not created any articles"
+				noArticleMessage="The articles that you have created will be listed here."
 			/>
 		</div>
 	);
 }
 
-export default Dashboard;
+export default MyArticles;

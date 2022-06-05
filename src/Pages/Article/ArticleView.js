@@ -45,8 +45,7 @@ function ArticleView() {
 	  	setDeleting(true);
 		try {
 			await API.delete('api/article/delete', {data: { id }});
-			//todo: change this to article listing url
-			navigate('/');
+			navigate('/article/mine');
 		} catch (e) {
 			const errors = e.response ? e.response.data.message : undefined;
 			Swal.fire({

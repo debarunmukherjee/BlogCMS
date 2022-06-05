@@ -48,10 +48,11 @@ export default function Navbar() {
 			]);
 		} else {
 			const navItems = [
-				{ name: 'Dashboard', href: '#', current: location.pathname === '/dashboard' },
+				{ name: 'Dashboard', href: '/dashboard', current: location.pathname === '/dashboard' },
 			];
 			if (userState.userData.role !== 'user') {
-				navItems.push({name: 'Create Blog', href: '/article/add', current: location.pathname === '/article/add'})
+				navItems.push({name: 'Create Article', href: '/article/add', current: location.pathname === '/article/add'})
+				navItems.push({name: 'My Articles', href: '/article/mine', current: location.pathname === '/article/mine'})
 			}
 			if (userState.userData.role === 'super-admin') {
 				navItems.push({name: 'Admin', href: '/admin', current: location.pathname === '/admin'})

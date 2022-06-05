@@ -12,6 +12,7 @@ import ArticleCreate from "./Pages/Article/ArticleCreate";
 import Admin from "./Pages/Admin/Admin";
 import ArticleView from "./Pages/Article/ArticleView";
 import ArticleEdit from "./Pages/Article/ArticleEdit";
+import MyArticles from "./Pages/Article/MyArticles";
 
 export const UserContext = React.createContext();
 
@@ -30,6 +31,7 @@ function App() {
 						<Route path="/article/add" element={<ArticleCreate />} />
 						<Route path="/article/view/:id" element={<ArticleView />} />
 						<Route path="/article/edit/:id" element={<ArticleEdit />} />
+						<Route path="/article/mine" element={<MyArticles />} />
 						<Route path="/admin" element={<Admin />} />
 						<Route path="*" element={<PageNotFound />} />
 					</Routes>
