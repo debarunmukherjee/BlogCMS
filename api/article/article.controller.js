@@ -4,7 +4,8 @@ const {
 	getArticlesForUser,
 	getArticleById,
 	updateArticle,
-	deleteArticle
+	deleteArticle,
+	getApprovedArticles
 } = require('./article.service');
 
 module.exports = {
@@ -120,4 +121,19 @@ module.exports = {
 			data: undefined
 		});
 	},
+	getPublicArticles: async (req, res) => {
+		const result = await getApprovedArticles();
+		if (result === false) {
+			return res.status(500).json({
+				success: 0,
+				message: 'Some server error occurred',
+				data: undefined
+			});
+		}
+		return res.status(200).json({
+			success: 1,
+			message: 'Articles fetched successfully',
+			data: result
+		});
+	}
 };

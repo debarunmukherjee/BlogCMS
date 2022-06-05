@@ -1,5 +1,5 @@
 const pool = require("../../config/database");
-const {ARTICLE_REVIEW_STATUS} = require("../../constants/blogStatus");
+const {ARTICLE_REVIEW_STATUS, ARTICLE_APPROVED_STATUS} = require("../../constants/blogStatus");
 
 module.exports = {
 	createNewArticle: async (title, body, authorUserId) => {
@@ -17,7 +17,7 @@ module.exports = {
 	getArticleById: async (id) => {
 		try {
 			const [rows] = await pool.promise().query(
-				'select * from articles where id = ?',
+				'select articles.*, users.fullname as authorName from articles inner join users on articles.authorId = users.id where articles.id = ?',
 				[id]
 			);
 			if (rows.length === 0) {
@@ -59,7 +59,9 @@ module.exports = {
 				'delete from articles where id = ?',
 				[id]
 			)
-			return true;
+			if (res[0].affectedRows > 0) {
+				return true;
+			}
 		} catch (e) {
 			console.log(e);
 			return false;
@@ -68,8 +70,20 @@ module.exports = {
 	getArticlesForUser: async (userId) => {
 		try {
 			const [rows] = await pool.promise().query(
-				'select * from articles where authorId = ?',
+				'select articles.*, users.fullname as authorName from articles inner join users on articles.authorId = users.id where authorId = ?',
 				[userId]
+			);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+	getApprovedArticles: async () => {
+		try {
+			const [rows] = await pool.promise().query(
+				'select articles.*, users.fullname as authorName from articles inner join users on articles.authorId = users.id where status = ?',
+				[ARTICLE_APPROVED_STATUS]
 			);
 			return rows;
 		} catch (e) {

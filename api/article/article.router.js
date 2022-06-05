@@ -13,7 +13,8 @@ const {
 	getArticlesForCurrentUser,
 	getArticleDetails,
 	updateArticleDetails,
-	deleteOldArticle
+	deleteOldArticle,
+	getPublicArticles
 } = require('./article.controller');
 
 router.post(
@@ -34,6 +35,14 @@ router.get(
 		articleCreateAuthorized,
 	],
 	getArticlesForCurrentUser
+);
+
+router.get(
+	'/get/public',
+	[
+		authorized,
+	],
+	getPublicArticles
 );
 
 router.get(
