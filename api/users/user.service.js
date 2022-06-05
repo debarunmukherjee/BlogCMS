@@ -1,5 +1,5 @@
 const pool = require("../../config/database");
-const { SUPER_ADMIN, ADMIN, VIEWER } = require('../../constants/role');
+const { ADMIN, VIEWER } = require('../../constants/role');
 
 module.exports = {
 	createNewUser: (data, callBack) => {
