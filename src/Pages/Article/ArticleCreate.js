@@ -27,7 +27,7 @@ function ArticleCreate() {
 			});
 			navigate(`/article/view/${res.data.data.id}`);
 		} catch (e) {
-			const errors = e.response ? e.response.data.message : undefined;
+			const errors = e.response ? (e.response.data.errors ? e.response.data.errors : e.response.data.message) : undefined;
 			Swal.fire({
 					title: getErrorMessage(errors),
 					icon: "error"

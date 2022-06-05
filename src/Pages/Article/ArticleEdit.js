@@ -61,7 +61,7 @@ function ArticleEdit() {
 			});
 			navigate(`/article/view/${id}`);
 		} catch (e) {
-			const errors = e.response ? e.response.data.message : undefined;
+			const errors = e.response ? (e.response.data.errors ? e.response.data.errors : e.response.data.message) : undefined;
 			Swal.fire({
 					title: getErrorMessage(errors),
 					icon: "error"
