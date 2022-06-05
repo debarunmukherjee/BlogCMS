@@ -6,6 +6,8 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import PageNotFound from "./Pages/PageNotFound/PageNotFound";
 
 export const UserContext = React.createContext();
 
@@ -20,6 +22,8 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="*" element={<PageNotFound />} />
 					</Routes>
 				</div>
 			</BrowserRouter>
